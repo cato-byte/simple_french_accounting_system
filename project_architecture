@@ -1,0 +1,108 @@
+🧾 Project Architecture – My Accounting App for Auto-Entrepreneurs
+🎯 Purpose
+I'm building a containerized Python application tailored to the accounting needs of French auto-entrepreneurs. It will help me (or others like me) keep track of income, optionally expenses, and generate monthly accounting reports and invoices. These will be preserved in the company’s cloud and declarations to URSSAF will be handled manually.
+
+🧱 System Design Overview
+The app is designed around simplicity, reliability, and compliance. It's made up of:
+
+lua
+Copier
+Modifier
++----------------------+
+| Django Web Interface |
+| (Frontend + Backend) |
++----------+-----------+
+           |
+     +-----v-----+         +--------------+
+     | PostgreSQL |<------>| PDF Generator|
+     +-----------+         +--------------+
+           |
+     +-----v----+
+     | AWS S3   |
+     +----------+
+🧩 Core Components and Why I Chose Them
+✅ Django (Web App + Admin + API)
+Django gives me everything in one place: ORM, admin interface, form handling, templating, routing.
+
+I'll use it for both the frontend UI and backend logic.
+
+It integrates smoothly with libraries like WeasyPrint and boto3.
+
+I'm adding authentication so the app is safe if I ever host it or give access to someone else.
+
+🐘 PostgreSQL (Database)
+I’m using Postgres because it’s robust, SQL-compliant, and works perfectly with Django.
+
+I’ll store:
+
+Income entries
+
+Optional expense entries
+
+Invoices
+
+Report logs (to track what’s already been generated/sent)
+
+User credentials (for authentication)
+
+📄 WeasyPrint (PDF Generation)
+I’ll use WeasyPrint to generate beautiful, compliant PDFs for:
+
+Monthly accounting reports
+
+Invoices
+
+Since it uses HTML + CSS, I can reuse Django templates and keep the styling consistent.
+
+☁️ AWS S3 (Cloud Storage)
+I want reports saved securely and backed up, so I’ll upload them to my company’s S3 bucket using boto3.
+
+Credentials and bucket paths will never be in Dockerfiles — I’ll store them securely in .env files excluded from version control.
+
+🔒 Secrets Management
+I’ll manage secrets like AWS credentials, Django keys, and DB passwords using .env files.
+
+These won’t be baked into containers. They’ll stay local and safe.
+
+If I ever move to production, I’ll use Docker secrets or a secrets manager.
+
+⏱️ Report Scheduler (Triggered on App Launch)
+The app won’t be a constantly running service.
+
+When I open the app, it will check if the last month’s report exists. If not, it will prompt me to generate and upload it.
+
+No need for a cron job or daemon — just lightweight and intentional.
+
+🐳 Docker Architecture
+I’m containerizing the whole project using Docker Compose:
+
+yaml
+Copier
+Modifier
+services:
+  web:      # Django app
+  db:       # PostgreSQL
+This makes development clean and repeatable.
+
+I’ll mount volumes for DB persistence and use a shared network.
+
+The containers won’t include any sensitive data — everything secret is injected at runtime.
+
+💡 Additional Features & Considerations
+✅ Authentication for login/logout and access control
+
+📊 A dashboard to visualize income/expenses per month
+
+📦 Optional .csv export in addition to PDF
+
+🧮 PDF and report generation via background tasks or management commands
+
+🔧 I’ll use Django ORM for most logic, but showcase my data engineering side with optimized raw SQL queries for the reporting engine
+
+This project is a great opportunity for me to:
+
+Build a real tool that I’ll actually use
+
+Stay compliant with French regulations
+
+Showcase backend, data, and DevOps skills (Docker, S3, SQL, Python)
