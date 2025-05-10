@@ -8,6 +8,7 @@ __pycache__/
 
 # Specific pycache folder in app/accounting
 app/accounting/__pycache__/
+app/expenses/migrations/
 
 # Virtual environment
 venv/
