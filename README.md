@@ -96,3 +96,34 @@ Provides a more complete picture of business health
 
 The system will store monthly PDF reports and invoices in the cloud, organized by year and month, to comply with the legal obligation of document retention for 10 years.
 
+### Run once to generate django structure
+
+docker compose run web django-admin startproject accounting .
+docker-compose run web python manage.py startapp expenses
+
+
+### Reminders for building images from scratch
+
+# Stop containers and remove volumes (this clears the Postgres data too)
+docker compose down -v
+
+# Rebuild images to ensure latest code and settings are used
+docker compose build --no-cache
+
+# Start again
+docker compose up --build
+
+### Run to migrate from default sqlitedb to postgres db
+
+docker compose exec web python manage.py makemigrations
+docker compose exec web python manage.py migrate
+
+### Create django superuser
+
+docker compose exec web python manage.py createsuperuser
+
+### Check if django is using postgres DB
+
+ docker compose exec web python manage.py shell
+ from django.db import connection
+ print(connection.settings_dict['ENGINE'])
