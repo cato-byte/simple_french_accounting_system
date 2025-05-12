@@ -1,10 +1,14 @@
+from django.contrib.auth import views as auth_views
 from django.urls import path, include
 from . import views
+from .forms import CustomLoginForm
 
 urlpatterns = [
     path('', views.home, name='home'),
-    path('users/', views.user_list, name='user_list'),
-    path('users/add/', views.user_create, name='user_create'),
-    path('users/<int:user_id>/deactivate/', views.user_deactivate, name='user_deactivate'),
-    path('accounts/', include('django.contrib.auth.urls')),  # Login/logout etc.
+    path('register/', views.register, name='register'),
+    path('dashboard/', views.dashboard, name='dashboard'),
+    path('accounts/login/', auth_views.LoginView.as_view(
+        authentication_form=CustomLoginForm
+    ), name='login'),
+     path('accounts/', include('django.contrib.auth.urls')),
 ]

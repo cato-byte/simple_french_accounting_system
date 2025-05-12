@@ -1,30 +1,33 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from .models import UserAccount
-from .forms import UserAccountForm
+from django.contrib.auth import login
+from django.contrib import messages
+from django.shortcuts import render, redirect
+from .forms import CustomUserCreationForm
 
 # Create your views here.
 from django.contrib.auth.decorators import login_required
 
-@login_required
+import logging
+
+logger = logging.getLogger(__name__)
+
+
 def home(request):
     return render(request, 'expenses/home.html')
 
-def user_list(request):
-    users = UserAccount.objects.all()
-    return render(request, 'expenses/user_list.html', {'users': users})
-
-def user_create(request):
+def register(request):
     if request.method == 'POST':
-        form = UserAccountForm(request.POST)
+        form = CustomUserCreationForm(request.POST)
         if form.is_valid():
-            form.save()
-            return redirect('user_list')
+            user = form.save()
+            messages.success(request, 'User created successfully. You can now log in.')
+            return redirect('login')
+        else:
+            messages.error(request, 'Please correct the errors below.')
     else:
-        form = UserAccountForm()
-    return render(request, 'expenses/user_form.html', {'form': form})
+        form = CustomUserCreationForm()
+    return render(request, 'expenses/register.html', {'form': form})
 
-def user_deactivate(request, user_id):
-    user = get_object_or_404(UserAccount, id=user_id)
-    user.is_active = False
-    user.save()
-    return redirect('user_list')
+
+@login_required
+def dashboard(request):
+    return render(request, 'expenses/dashboard.html')

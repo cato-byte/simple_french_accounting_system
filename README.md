@@ -116,7 +116,7 @@ docker compose up --build
 ### Run to migrate from default sqlitedb to postgres db
 
 docker compose exec web python manage.py makemigrations
-docker compose exec web python manage.py migrate
+docker compose exec web python manage.py migratepython manage.py migrate
 
 ### Create django superuser
 
@@ -127,3 +127,8 @@ docker compose exec web python manage.py createsuperuser
  docker compose exec web python manage.py shell
  from django.db import connection
  print(connection.settings_dict['ENGINE'])
+
+ ### Access the db by hand 
+
+ docker compose exec db psql -U your_user -d your_database
+

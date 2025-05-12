@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Hello {{ request.user.username }}</h2>
+    <form method="post" action="{% url 'logout' %}">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-outline-danger">Logout</button>
+    </form>
+  </div>
+
+<h3>Dashboard</h3>
+<ul>
+  <li><a href="#">Your Expenses</a></li>
+  <li><a href="#">Your Invoices</a></li>
+  <li><a href="#">Monthly Reports</a></li>
+</ul>
+
+<hr>
+<h4>Mock Charts:</h4>
+<img src="https://via.placeholder.com/600x200?text=Monthly+Expenses" alt="Mock Chart">
+<img src="https://via.placeholder.com/600x200?text=Monthly+Income" alt="Mock Chart">
+{% endblock %}
