@@ -8,7 +8,7 @@ __pycache__/
 
 # Specific pycache folder in app/accounting
 app/accounting/__pycache__/
-app/expenses/migrations/
+
 
 # Virtual environment
 venv/
@@ -29,3 +29,6 @@ venv/
 # OS generated files
 .DS_Store
 Thumbs.db
+
+# Default DB shouldnt be created just in case
+db.sqlite3

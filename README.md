@@ -116,7 +116,7 @@ docker compose up --build
 ### Run to migrate from default sqlitedb to postgres db
 
 docker compose exec web python manage.py makemigrations
-docker compose exec web python manage.py migratepython manage.py migrate
+docker compose exec web python manage.py migrate
 
 ### Create django superuser
 
@@ -132,3 +132,18 @@ docker compose exec web python manage.py createsuperuser
 
  docker compose exec db psql -U your_user -d your_database
 
+ ### Run tests
+
+ docker compose run --rm test_runner
+
+  ### Clean everything and run
+
+  docker compose down
+  docker volume ls
+  docker volume rm simple_french_accounting_system_postgres_data
+  docker volume rm simple_french_accounting_system_minio_data
+  docker compose up --build
+
+  in another terminal
+  docker compose exec web python manage.py makemigrations
+  docker compose exec web python manage.py migrate

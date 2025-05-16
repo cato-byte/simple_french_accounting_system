@@ -87,6 +87,9 @@ DATABASES = {
         'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
         'HOST': os.getenv('POSTGRES_HOST'),  # this matches the service name in docker-compose
         'PORT': os.getenv('POSTGRES_PORT'),
+        'TEST': {
+            'NAME': 'test_' + os.getenv('POSTGRES_DB'),  # Ensure a test database name is set
+        },
     }
 }
 
@@ -161,3 +164,6 @@ LOGGING = {
         'level': 'DEBUG',
     },
 }
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'

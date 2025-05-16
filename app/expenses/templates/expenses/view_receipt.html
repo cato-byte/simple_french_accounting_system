@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+  <div class="card shadow-sm">
+    <div class="card-body text-center">
+
+      <h4 class="card-title mb-3">Receipt Viewer</h4>
+
+      <p class="text-muted">
+        <strong>File name:</strong> {{ expense.receipt_image_name|default:"Unnamed file" }}
+      </p>
+
+      {% if expense.receipt_image %}
+        <img src="{{ expense.receipt_image.url }}" alt="Receipt Image" class="img-fluid mb-4" style="max-height: 600px; border: 1px solid #ccc;">
+        <div class="d-flex justify-content-center gap-3">
+          <a href="{{ expense.receipt_image.url }}" download class="btn btn-outline-primary">
+            Download
+          </a>
+          <a href="{% url 'user_expenses' %}" class="btn btn-secondary">
+            Back to Expenses
+          </a>
+        </div>
+      {% else %}
+        <p class="text-danger">No receipt image found for this expense.</p>
+        <a href="{% url 'user_expenses' %}" class="btn btn-secondary">Back to Expenses</a>
+      {% endif %}
+
+    </div>
+  </div>
+</div>
+{% endblock %}

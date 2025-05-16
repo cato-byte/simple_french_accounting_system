@@ -1,7 +1,13 @@
 {% extends "base.html" %}
 {% block content %}
-<h1>Welcome to the French Accounting App</h1>
-<p>This is your friendly accounting assistant.</p>
-<a href="{% url 'register' %}" class="btn btn-primary">Register</a>
-<a href="{% url 'login' %}" class="btn btn-secondary">Login</a>
+<div class="container mt-5">
+  <div class="text-center">
+    <h1 class="mb-4">Welcome to the French Accounting App</h1>
+    <p class="lead mb-4">This is your friendly accounting assistant.</p>
+    <div>
+      <a href="{% url 'register' %}" class="btn btn-primary me-2">Register</a>
+      <a href="{% url 'login' %}" class="btn btn-outline-secondary">Login</a>
+    </div>
+  </div>
+</div>
 {% endblock %}

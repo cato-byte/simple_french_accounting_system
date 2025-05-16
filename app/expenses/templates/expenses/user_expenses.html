@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h3>Your Expenses</h3>
+    <div>
+      <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary me-2">Back to Dashboard</a>
+      <a href="{% url 'add_expense' %}?next={% url 'user_expenses' %}" class="btn btn-primary">Add Expense</a>
+    </div>
+  </div>
+
+  <!-- Filtering Form -->
+  <form method="get" class="mb-3">
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" name="show_all" value="1" id="showAll" {% if request.GET.show_all %}checked{% endif %} onchange="this.form.submit()">
+      <label class="form-check-label" for="showAll">
+        Show invalidated expenses
+      </label>
+    </div>
+  </form>
+
+  {% if expenses %}
+  <div class="card shadow-sm">
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover table-striped mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>Date</th>
+              <th>Supplier</th>
+              <th>Description</th>
+              <th>Amount (€)</th>
+              <th>Category</th>
+              <th>Status</th>
+              <th>Actions</th>
+              <th>Receipt</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for expense in expenses %}
+            <tr>
+              <td>{{ expense.expense_date }}</td>
+              <td>{{ expense.supplier.name }}</td>
+              <td>{{ expense.description|default:"—" }}</td>
+              <td>{{ expense.amount }}</td>
+              <td>{{ expense.category|default:"—" }}</td>
+              <td>
+                {% if expense.is_active %}
+                  <span class="badge bg-success">Active</span>
+                {% else %}
+                  <span class="badge bg-secondary">Invalidated</span>
+                {% endif %}
+              </td>
+              <td>
+                {% if expense.is_active %}
+                  <a href="{% url 'invalidate_expense' expense.id %}" class="btn btn-sm btn-outline-danger">
+                    Invalidate
+                  </a>
+                {% else %}
+                  <span class="text-muted small">No actions</span>
+                {% endif %}
+              </td>
+              <td>
+                {% if expense.receipt_image %}
+                  <a href="{% url 'view_receipt' expense.pk %}" class="btn btn-sm btn-outline-secondary">
+                    View
+                  </a>
+                {% else %}
+                  <span class="text-muted">—</span>
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  {% else %}
+  <div class="alert alert-info mt-4" role="alert">
+    No expenses recorded yet.
+  </div>
+  {% endif %}
+
+  {% if expenses.has_other_pages %}
+  <nav aria-label="Expense navigation" class="mt-4">
+    <ul class="pagination justify-content-center">
+      {% if expenses.has_previous %}
+      <li class="page-item">
+        <a class="page-link" href="?page={{ expenses.previous_page_number }}{% if request.GET.show_all %}&show_all=1{% endif %}">« Previous</a>
+      </li>
+      {% else %}
+      <li class="page-item disabled"><span class="page-link">« Previous</span></li>
+      {% endif %}
+
+      <li class="page-item disabled">
+        <span class="page-link">Page {{ expenses.number }} of {{ expenses.paginator.num_pages }}</span>
+      </li>
+
+      {% if expenses.has_next %}
+      <li class="page-item">
+        <a class="page-link" href="?page={{ expenses.next_page_number }}{% if request.GET.show_all %}&show_all=1{% endif %}">Next »</a>
+      </li>
+      {% else %}
+      <li class="page-item disabled"><span class="page-link">Next »</span></li>
+      {% endif %}
+    </ul>
+  </nav>
+  {% endif %}
+</div>
+{% endblock %}

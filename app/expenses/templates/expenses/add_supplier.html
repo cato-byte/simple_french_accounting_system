@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<h1>Add Supplier</h1>
+<input type="hidden" name="next" value="{{ next }}">
+  {% csrf_token %}
+  {% crispy form %}
+{% endblock %}
