@@ -17,6 +17,7 @@ services:
       - db
       - minio
       - minio-init
+      - ocr
 
   test_runner:
     build: ./app
@@ -71,7 +72,12 @@ services:
     environment:
       AWS_STORAGE_BUCKET_NAME: ${AWS_STORAGE_BUCKET_NAME:-my-bucket}
 
-
+  ocr:
+    build: ./ocr_service
+    ports:
+      - "5001:5000"
+    environment:
+      - LANG=fr_FR.UTF-8
       
 volumes:
   postgres_data:
