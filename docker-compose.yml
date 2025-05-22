@@ -18,8 +18,10 @@ services:
       - minio
       - minio-init
       - ocr
+      - huggingface-parser
 
-  test_runner:
+
+  test-runner:
     build: ./app
     command: >
       sh -c "
@@ -74,10 +76,34 @@ services:
 
   ocr:
     build: ./ocr_service
+    command: pytest
+    volumes:
+    - ./ocr_service:/app
+    - ${HOME}/.EasyOCR:/root/.EasyOCR
     ports:
       - "5001:5000"
     environment:
       - LANG=fr_FR.UTF-8
+      - PYTHONPATH=/app
+
+  huggingface-parser:
+    build: ./huggingface_parser
+    command: pytest
+    volumes:
+    - ./huggingface_parser:/app
+    - ${HOME}/.cache/huggingface/hub:/root/.cache/huggingface/hub
+    ports:
+      - "5003:5003"
+    environment:
+      - PYTHONPATH=/app
+      - TRANSFORMERS_CACHE=/root/.cache/huggingface/hub
+    # To enable GPU in prod:
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - capabilities: [gpu]
+
       
 volumes:
   postgres_data:

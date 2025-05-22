@@ -3,7 +3,32 @@
 
 {% block content %}
 <h1>Add Expense</h1>
-<input type="hidden" name="next" value="{{ next }}">
-  {% csrf_token %}
-  {% crispy form %}
+
+{% if upload_form %}
+  <!-- Step 1: Image Upload -->
+  <form method="post" enctype="multipart/form-data" action="{% url 'upload_receipt_image' %}">
+    {% csrf_token %}
+    {% crispy upload_form %}
+    <input type="hidden" name="next" value="{{ next }}">
+    <button type="submit" class="btn btn-outline-primary">Extract Fields</button>
+  </form>
+
+{% elif form %}
+  <!-- Step 2: Final Expense Form -->
+  {% if ocr_preview %}
+    <div class="alert alert-info">
+      Fields below were auto-filled from your receipt. Please review and confirm.
+    </div>
+  {% endif %}
+
+  <form method="post" enctype="multipart/form-data" action="{% url 'add_expense' %}">
+    {% csrf_token %}
+    {% crispy form %}
+    <input type="hidden" name="confirm_submission" value="1">
+    <input type="hidden" name="next" value="{{ next }}">
+    <button type="submit" class="btn btn-primary">Add Expense</button>
+  </form>
+
+{% endif %}
+
 {% endblock %}

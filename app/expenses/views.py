@@ -1,6 +1,6 @@
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import CustomUserCreationForm,ExpenseForm, SupplierForm, InvalidateExpenseForm
+from .forms import CustomUserCreationForm,ExpenseForm, SupplierForm, InvalidateExpenseForm, UploadImageForm
 from .models import Expense, Supplier
 from django.utils import timezone
 from django.urls import reverse
@@ -8,6 +8,8 @@ from django.urls import reverse
 # Create your views here.
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from .ocr_parsing import extract_fields_from_receipt_image
+
 
 import logging
 
@@ -34,6 +36,42 @@ def register(request):
 @login_required
 def dashboard(request):
     return render(request, 'expenses/dashboard.html')
+
+
+
+@login_required
+def upload_receipt_image(request):
+    """
+    A separate view that handles only the image upload, runs OCR + NLP,
+    and returns the add_expense form prefilled.
+    """
+    next_url = request.POST.get('next', reverse('user_expenses'))
+
+    if request.method == 'POST':
+        upload_form = UploadImageForm(request.POST, request.FILES)
+
+        if upload_form.is_valid():
+            image = upload_form.cleaned_data['receipt_image']
+            parsed_fields = extract_fields_from_receipt_image(image, lang="fr")  # Language auto-detect later
+
+            # Build prefilled expense form
+            form = ExpenseForm(initial=parsed_fields)
+            form.fields['receipt_image'].initial = image  # Optional: display but won't persist across submit
+
+            return render(request, 'expenses/add_expense.html', {
+                'form': form,
+                'next': next_url,
+                'ocr_preview': True
+            })
+
+        # Not valid: show upload form with errors
+        return render(request, 'expenses/add_expense.html', {
+            'upload_form': upload_form,
+            'next': next_url
+        })
+
+    # If not POST, redirect to main form view
+    return redirect('add_expense')
 
 @login_required
 def add_expense(request):
@@ -70,6 +108,8 @@ def add_expense(request):
         form = ExpenseForm(initial=initial_data)
 
     return render(request, 'expenses/add_expense.html', {'form': form, 'next': next_url})
+
+
 
 @login_required
 def invalidate_expense(request, pk):

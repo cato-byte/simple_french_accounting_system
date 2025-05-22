@@ -16,4 +16,5 @@ urlpatterns = [
     path('expenses/', views.user_expenses, name='user_expenses'),
     path('expenses/<int:pk>/invalidate/', views.invalidate_expense, name='invalidate_expense'),
     path('expenses/<int:pk>/receipt/', views.view_receipt, name='view_receipt'),
+    path('expenses/upload-image/', views.upload_receipt_image, name='upload_receipt_image')
 ]

@@ -147,3 +147,14 @@ docker compose exec web python manage.py createsuperuser
   in another terminal
   docker compose exec web python manage.py makemigrations
   docker compose exec web python manage.py migrate
+
+
+  ### run ocr tests
+
+docker compose run --rm  ocr pytest
+
+
+
+  ### run spacy_parser tests
+
+docker compose run --rm huggingface-parser pytest

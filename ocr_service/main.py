@@ -16,7 +16,7 @@ app.add_middleware(
 )
 
 # Load OCR model for English + French + Spanish (only once, on app start)
-reader = easyocr.Reader(['fr', 'en', 'es', 'ca'], gpu=False)
+reader = easyocr.Reader(['fr', 'en', 'es'], gpu=False)
 
 # API endpoint for OCR
 @app.post("/ocr")

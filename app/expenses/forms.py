@@ -50,44 +50,46 @@ class ExpenseForm(forms.ModelForm):
         self.helper.form_method = 'post'
 
         self.helper.layout = Layout(
-            Row(
-                Column('supplier', css_class='col-md-10'),
-                Column(
-                    HTML(
-                        '<a href="{% url \'add_supplier\' %}?next={% url \'add_expense\' %}" '
-                        'class="btn btn-outline-secondary mt-2">Add Supplier</a>'
-                    ),
-                    css_class='col-md-2'
+                'receipt_image',  # 📷 move this to the top
+
+                Row(
+                    Column('supplier', css_class='col-md-10'),
+                    Column(
+                        HTML(
+                            '<a href="{% url \'add_supplier\' %}?next={% url \'add_expense\' %}" '
+                            'class="btn btn-outline-secondary mt-2">Add Supplier</a>'
+                        ),
+                        css_class='col-md-2'
+                    )
+                ),
+                'expense_date',
+                'description',
+                'amount',
+                'payment_method',
+                'invoice_number',
+                'category',
+
+                Row(
+                    Column(
+                        Submit('submit', 'Add Expense', css_class='btn btn-primary me-2'),
+                        Button('cancel', 'Cancel', css_class='btn btn-outline-secondary', onclick="window.history.back()"),
+                        css_class='d-flex gap-2 align-items-center'
+                    )
                 )
-            ),
-            'expense_date',
-            'description',
-            'amount',
-            'payment_method',
-            'invoice_number',
-            'category',
-            'receipt_image',
-            Row(
-        Column(
-            Submit('submit', 'Add Expense', css_class='btn btn-primary me-2'),
-            Button('cancel', 'Cancel', css_class='btn btn-outline-secondary', onclick="window.history.back()"),
-            css_class='d-flex gap-2 align-items-center'
-        )
-    )
-        )
+            )
 
     class Meta:
         model = Expense
         fields = [
-            'supplier',
-            'expense_date',
-            'description',
-            'amount',
-            'payment_method',
-            'invoice_number',
-            'category',
-            'receipt_image',
-        ]
+        'receipt_image',       
+        'supplier',
+        'expense_date',
+        'description',
+        'amount',
+        'payment_method',
+        'invoice_number',
+        'category',
+    ]
         widgets = {
             'expense_date': forms.DateInput(attrs={'type': 'date'}),
             'description': forms.Textarea(attrs={'rows': 2}),
@@ -156,3 +158,6 @@ class SupplierForm(forms.ModelForm):
         if siret and len(siret) != 14:
             raise forms.ValidationError("SIRET must be exactly 14 digits.")
         return siret
+    
+class UploadImageForm(forms.Form):
+    receipt_image = forms.ImageField(required=True)
